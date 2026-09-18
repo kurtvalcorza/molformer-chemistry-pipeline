@@ -1,0 +1,40 @@
+[project]
+name = "molformer-chemistry-pipeline"
+version = "0.1.0"
+description = "DIMER pipeline for MoLFormer-XL (ibm-research/MoLFormer-XL-both-10pct): SMILES embeddings and bounded molecular-property classification fine-tuning"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { file = "LICENSE" }
+authors = [{ name = "Kurt Valcorza" }]
+dependencies = [
+  "torch==2.14.0",
+  "torchvision==0.29.0",
+  "torchaudio==2.11.0",
+  # MoLFormer's pinned upstream code calls transformers.masking_utils.create_bidirectional_mask
+  # with `inputs_embeds=`, which exists only in Transformers 5.5.0 and later, so this repository
+  # pins 5.x rather than the fleet's 4.57.6 (docs/WEIGHTS.md explains the consequence).
+  "transformers==5.17.0",
+  "huggingface-hub==1.32.0",
+  "tokenizers==0.23.2",
+  "safetensors==0.8.0",
+  "numpy==2.5.3",
+]
+[project.optional-dependencies]
+dev = ["pytest==8.4.2", "ruff==0.16.6"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[tool.hatch.build.targets.wheel]
+packages = ["src/molformer_chemistry_pipeline"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["tutorials"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
