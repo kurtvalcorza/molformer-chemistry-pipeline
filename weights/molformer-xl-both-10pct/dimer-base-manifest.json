@@ -1,0 +1,45 @@
+{
+  "format": "dimer_hf_snapshot",
+  "formatVersion": 1,
+  "modelKey": "molformer-xl-both-10pct",
+  "modelId": "ibm-research/MoLFormer-XL-both-10pct",
+  "revision": "361063d0ad524ef77cf39b08469f6be770dc550f",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6279,
+      "sha256": "fff331c6a973fa6995662ac31354c702ac0f4805d494e7506b979a3a6cee6f44"
+    },
+    {
+      "path": "config.json",
+      "bytes": 1015,
+      "sha256": "3ef9eaac8c7ca6282fd6256ed038d151bd4ff42a4ff855367e0d7197bbc1c284"
+    },
+    {
+      "path": "configuration_molformer.py",
+      "bytes": 7101,
+      "sha256": "b88ea8d4b7b5e54f4f186cc7a230eff308928020a030f153a038fd12c05e3bed"
+    },
+    {
+      "path": "model.safetensors",
+      "bytes": 187248784,
+      "sha256": "0795977fe7192c4acdaf052f0e8464af57bc4bb59211271c5e61aaba2637b9c6"
+    },
+    {
+      "path": "modeling_molformer.py",
+      "bytes": 36884,
+      "sha256": "6f1ef72022de2c69e95661899422a7bb39a40a2cc5a6cb6216f14e9b7d84559c"
+    },
+    {
+      "path": "tokenizer.json",
+      "bytes": 54010,
+      "sha256": "3df1f2219653c44fac9fa03b7f788b372eb2544ecc176737bb9aca8411b471a5"
+    },
+    {
+      "path": "tokenizer_config.json",
+      "bytes": 1132,
+      "sha256": "56f93dc43e4383fcfc6342e09d782ef38d48ef227215a4a92ff8762fd5b8ff3e"
+    }
+  ],
+  "totalBytes": 187355205
+}
