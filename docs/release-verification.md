@@ -124,6 +124,7 @@ A known-failing default path in the supported runtime blocks release (REL11).
 
 | Notebook | Commit / notebook blob | Date (UTC) | Executor | Outcome |
 |---|---|---|---|---|
+| `molformer_chemistry_colab.ipynb` | `7c2ab16` / `dfb259ef4801` | 2026-09-18 | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, empty Hugging Face cache, no repository checkout) | **PASS** — 13/13 code cells after the expected fresh-process restart following dependency installation; supported clean-runtime evidence including download, digest verification and the pinned remote-code boundary |
 | `molformer_chemistry_colab.ipynb` | `daaa53f` / `dfb259ef` | 2026-09-18 | Local pre-flight harness (Windows, CPython 3.12.10, CPU, `google.colab` shim, pins pre-installed) | PASS — pre-flight only, **not** promotion evidence |
 
 ## Recorded executions
@@ -135,13 +136,13 @@ runtime, not general estimates.
 
 | Date (UTC) | Commit / notebook blob | Executor | Path exercised | Wall | Outcome |
 |---|---|---|---|---|---|
+| 2026-09-18 | `7c2ab16` / `dfb259ef4801` | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, clean cache, `transformers 5.17.0`) | Default sample path (download and verify 7 files including both remote-code modules → validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload) | 208.7 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. One expected fresh-process restart followed the install cell. |
 | 2026-09-18 | `daaa53f` / `dfb259ef` | Local pre-flight harness (Windows, CPython 3.12.10, CPU float32, `transformers 5.17.0`) | Default sample path (validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload); weights pre-staged, so `stage_missing_files` fetched 0 of 7 entries and `verify_snapshot` verified all 7 | 10.5 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. Pre-flight; hosted clean-runtime run still required |
 
 ## Current status
 
-The notebook source is complete and passes all static checks, including the generator parity checks (`--check` OK)
-and the remote-code boundary rule. A local pre-flight execution of the committed blob completed the whole default path
-on CPU, which catches defects but is **not** a supported runtime under REL1/REL10 — and note that it ran with the
-snapshot pre-staged, so the download-and-stage leg of MOD1–MOD9 has **not** been exercised end to end and must be
-covered by the hosted run. The repository stays at **Candidate** until a Colab or fresh-container run of the exact
-release revision is recorded above.
+The exact notebook blob passed the complete default path in a clean Kaggle Tesla T4 runtime with an empty Hugging Face
+cache and no repository checkout. The run exercised the download-and-stage leg and verified both pinned remote-code
+files before import, satisfying the hosted clean-runtime gate for the recorded revision. The maintainer approved
+promotion on 2026-09-18, so the repository is **Release-grade** for this verified tutorial carrier. The execution
+record remains sample-sanity evidence, not a benchmark or production-readiness claim.

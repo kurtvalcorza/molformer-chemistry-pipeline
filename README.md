@@ -66,7 +66,7 @@ Tests are offline: injected backends and temporary manifests, never the weights.
 
 ## Release status
 
-**Candidate.** Static/unit checks — including the standalone generator parity checks (`tools/build_notebook.py --check`, `tests/test_notebook_parity.py`) — do not constitute clean-runtime notebook evidence. One local CPU pre-flight execution of the committed notebook is recorded in `docs/release-verification.md`; complete the supported clean-runtime procedure in that document against the exact release revision before calling the notebook release-grade. DIMER hosting has a separate open gate — the remote-code requirement — recorded in `MODEL_CARD.md`.
+**Release-grade.** The exact committed notebook blob completed its full default path in a clean Kaggle Tesla T4 runtime, in addition to passing the static/unit and standalone generator-parity checks. The run verified the pinned remote-code files before import; the evidence and trust boundary are recorded in `docs/release-verification.md` and `MODEL_CARD.md`. This is release evidence for the tutorial carrier, not a benchmark or production-readiness claim.
 
 ## Licensing
 
