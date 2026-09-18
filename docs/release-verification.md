@@ -124,7 +124,7 @@ A known-failing default path in the supported runtime blocks release (REL11).
 
 | Notebook | Commit / notebook blob | Date (UTC) | Executor | Outcome |
 |---|---|---|---|---|
-| `molformer_chemistry_colab.ipynb` | _(pending — filled by the pre-flight record below once committed)_ | | | |
+| `molformer_chemistry_colab.ipynb` | `daaa53f` / `dfb259ef` | 2026-09-18 | Local pre-flight harness (Windows, CPython 3.12.10, CPU, `google.colab` shim, pins pre-installed) | PASS — pre-flight only, **not** promotion evidence |
 
 ## Recorded executions
 
@@ -135,10 +135,13 @@ runtime, not general estimates.
 
 | Date (UTC) | Commit / notebook blob | Executor | Path exercised | Wall | Outcome |
 |---|---|---|---|---|---|
-| _(pending)_ | | | | | |
+| 2026-09-18 | `daaa53f` / `dfb259ef` | Local pre-flight harness (Windows, CPython 3.12.10, CPU float32, `transformers 5.17.0`) | Default sample path (validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload); weights pre-staged, so `stage_missing_files` fetched 0 of 7 entries and `verify_snapshot` verified all 7 | 10.5 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. Pre-flight; hosted clean-runtime run still required |
 
 ## Current status
 
 The notebook source is complete and passes all static checks, including the generator parity checks (`--check` OK)
-and the remote-code boundary rule. The repository stays at **Candidate** until a Colab or fresh-container run of the
-exact release revision is recorded above.
+and the remote-code boundary rule. A local pre-flight execution of the committed blob completed the whole default path
+on CPU, which catches defects but is **not** a supported runtime under REL1/REL10 — and note that it ran with the
+snapshot pre-staged, so the download-and-stage leg of MOD1–MOD9 has **not** been exercised end to end and must be
+covered by the hosted run. The repository stays at **Candidate** until a Colab or fresh-container run of the exact
+release revision is recorded above.
