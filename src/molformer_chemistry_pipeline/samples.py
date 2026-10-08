@@ -257,9 +257,41 @@ def split_dataset(
         out["validation"].extend(rows[:n_val])
         out["test"].extend(rows[n_val : n_val + n_test])
         out["train"].extend(rows[n_val + n_test :])
+    # `adapt` validates the validation split, and `evaluate` each evaluated split, against the same
+    # contract as the whole dataset (>= MIN_RECORDS, >= MIN_RECORDS_PER_CLASS per class). Refuse here,
+    # before any model runs, rather than failing late with a message about "the dataset".
+    for name in ("validation", "test"):
+        part = out[name]
+        per_class = {c: sum(1 for r in part if r["label"] == c) for c in manifest["classes"]}
+        if len(part) < MIN_RECORDS or min(per_class.values()) < MIN_RECORDS_PER_CLASS:
+            need = minimum_records_per_class(len(manifest["classes"]), val_fraction, test_fraction)
+            raise ValueError(
+                f"the {name} split would have {len(part)} records ({per_class}); each evaluated split needs "
+                f"at least {MIN_RECORDS} records and {MIN_RECORDS_PER_CLASS} per class. With "
+                f"{len(manifest['classes'])} balanced classes at val_fraction={val_fraction} and "
+                f"test_fraction={test_fraction}, supply at least {need} records per class "
+                f"({need * len(manifest['classes'])} in total)"
+            )
     for part in out.values():
         rng.shuffle(part)
     return out
+
+
+def minimum_records_per_class(n_classes: int, val_fraction: float = 0.2, test_fraction: float = 0.25) -> int:
+    """Smallest per-class count for which a balanced dataset passes `split_dataset` and every downstream
+    split check: each class contributes >= MIN_RECORDS_PER_CLASS to validation and test, each of those
+    splits reaches MIN_RECORDS in total, and at least one record per class is left for training.
+    For two classes at the default fractions this is 18 (36 records)."""
+    for n in range(1, MAX_RECORDS + 1):
+        n_val = max(1, round(n * val_fraction))
+        n_test = max(1, round(n * test_fraction))
+        if (
+            n - n_val - n_test >= 1
+            and min(n_val, n_test) >= MIN_RECORDS_PER_CLASS
+            and min(n_val, n_test) * n_classes >= MIN_RECORDS
+        ):
+            return n
+    raise ValueError("no dataset size satisfies the split contract at these fractions")
 
 
 def load_byod_dataset(source: str | Path) -> list[dict[str, Any]]:
