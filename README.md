@@ -66,7 +66,7 @@ Tests are offline: injected backends and temporary manifests, never the weights.
 
 ## Release status
 
-**Candidate** — the `E2E` notebook was regenerated with an isolated, hash-locked environment and the review fixes, and its new blob awaits a one-pass clean-runtime run; the 2026-09-18 Kaggle Tesla T4 run of the earlier blob `dfb259ef4801` needed a restart after the install cell and is recorded as history in `docs/release-verification.md`. Static and unit checks, including the standalone generator parity checks, are necessary but are not the evidence; the hosted run is. The trust boundary is recorded in `docs/release-verification.md` and `MODEL_CARD.md`.
+**Candidate** — the `E2E` notebook was regenerated with an isolated, hash-locked environment and the review fixes, and the review-fix blob `7b0975db8ddd` (commit `9c8440b`) completed one pass with no restart and 0 errors on a fresh Colab Tesla T4 on 2026-10-08 (Colab CLI sequential execution, 14/14 code cells, 99.8 s; test accuracy / macro-F1 / AUROC 1.0 (n = 16) against majority 0.5 and formula 0.25, repeated embeddings identical, reload parity 0.0); REL12 (hosted BYOD) is pending; the 2026-09-18 Kaggle Tesla T4 run of the earlier blob `dfb259ef4801` needed a restart after the install cell and is recorded as history in `docs/release-verification.md`. Static and unit checks, including the standalone generator parity checks, are necessary but are not the evidence; the hosted run is. The trust boundary is recorded in `docs/release-verification.md` and `MODEL_CARD.md`.
 
 ## Licensing
 
