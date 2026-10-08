@@ -1,0 +1,151 @@
+[colab] Parsing notebook '/home/kurt/colab-runs/molformer-chemistry-pipeline-9c8440b-80f090/molformer_chemistry_colab_9c8440b_colab-cli-t4.ipynb'...
+[colab] Executing cell 1/14 - Infrastructure: build (or reuse) the isolated environment and route later cells to it...
+{'isolated_environment': '/content/dimer_isolated_env_cbaf70c710fc', 'reused': False, 'isolated_python': '3.12.12', 'kernel_python': '3.13.15', 'locked_packages': 56, 'setup_seconds': 56}
+{'routed_to': '/content/dimer_isolated_env_cbaf70c710fc/bin/python', 'worker_pid': 3869, 'worker_reused': False}
+[colab] Executing cell 2/14 - Infrastructure: record the runtime...
+{'notebook_source': {'repository': 'molformer-chemistry-pipeline', 'repository_revision': '6cde8bd0b92f5c7adad35cfb1632df444e74b2cd', 'embedded_module': 'src/molformer_chemistry_pipeline/pipeline.py', 'embedded_modules': ['src/molformer_chemistry_pipeline/pipeline.py', 'src/molformer_chemistry_pipeline/samples.py', 'src/molformer_chemistry_pipeline/metrics.py'], 'module_sha256': '1783c35ea4be6e6c9c614324c2cbd9c99a376a67182a137370f352362f8da134', 'generator': 'build_notebook.py/2.2', 'notebook_spec': '2.2'}, 'python': '3.12.12', 'executable': '/content/dimer_isolated_env_cbaf70c710fc/bin/python', 'torch': '2.14.0+cu130', 'transformers': '5.17.0', 'safetensors': '0.8.0', 'cuda': True}
+[colab] Executing cell 3/14 - molformer_chemistry-08...
+[colab] Executing cell 4/14 - molformer_chemistry-10...
+[colab] Executing cell 5/14 - molformer_chemistry-12...
+[colab] Executing cell 6/14 - Infrastructure: stage and digest-verify the pinned snapshot, then load the model...
+{'model_id': 'ibm-research/MoLFormer-XL-both-10pct', 'revision': '361063d0ad524ef77cf39b08469f6be770dc550f', 'license': 'apache-2.0', 'files': 7, 'total_bytes': 187355205}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{'weights_dir': '/content/weights/molformer-xl-both-10pct', 'fetched': ['README.md', 'config.json', 'configuration_molformer.py', 'model.safetensors', 'modeling_molformer.py', 'tokenizer.json', 'tokenizer_config.json']}
+{'verified_files': 7, 'revision': '361063d0ad524ef77cf39b08469f6be770dc550f'}
+[transformers] You are using a model of type `molformer` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+
+Loading weights:   0%|          | 0/207 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 207/207 [00:00<00:00, 6020.16it/s]
+[transformers] [1mMolformerModel LOAD REPORT[0m from: /content/weights/molformer-xl-both-10pct
+Key                                | Status     |  | 
+-----------------------------------+------------+--+-
+lm_head.transform.LayerNorm.weight | UNEXPECTED |  | 
+lm_head.transform.LayerNorm.bias   | UNEXPECTED |  | 
+lm_head.transform.dense.weight     | UNEXPECTED |  | 
+lm_head.decoder.weight             | UNEXPECTED |  | 
+lm_head.transform.dense.bias       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+{'device': 'cuda:0', 'source': 'local-snapshot'}
+{'remote_code_executed': True, 'remote_code_files_verified': ['configuration_molformer.py', 'modeling_molformer.py'], 'tokenizer': 'TokenizersBackend', 'upstream_deterministic_eval': False, 'deterministic_eval': True, 'parameters': 44375040, 'load_warnings': 0}
+[colab] Executing cell 7/14 - molformer_chemistry-16...
+{'data_source': 'synthetic constitutional-isomer dataset (seed 20260918, 64 molecules)', 'n_records': 64, 'classes': ['branched', 'linear'], 'class_counts': {'branched': 32, 'linear': 32}}
+{'distinct_formulas': 32, 'formulas_shared_across_classes': 32, 'validation': 'syntactic SMILES checks only; no cheminformatics toolkit is used'}
+{'smiles_characters': {'min': 7, 'max': 18, 'mean': 13.0}, 'ceilings': {'max_tokens': 200, 'max_records': 5000, 'max_classes': 20, 'min_records': 8, 'min_records_per_class': 3}, 'digest': '7c09cc871b80568e...'}
+{'train': 36, 'validation': 12, 'test': 16, 'written': 'outputs/molformer_chemistry_sample_dataset.csv'}
+{'pair': ('CCCCCCCCCCCI', 'CC(C)CCCCCCCCI'), 'formula': ('C11I1', 'C11I1')}
+caveat: the branched SMILES contains ( and ), so a character-level baseline would separate these classes trivially; the formula baseline below deliberately counts atoms instead
+[colab] Executing cell 8/14 - molformer_chemistry-19...
+{'smiles': 'CCCCCCCO', 'tokens_incl_bos_eos': 10, 'formula': 'C7O1'}
+{'smiles': 'CCCC(C)CCO', 'tokens_incl_bos_eos': 12, 'formula': 'C7O1'}
+{'smiles': 'ClCCBr', 'tokens_incl_bos_eos': 6, 'formula': 'Br1C2Cl1'}
+{'smiles': 'C[C@H](N)C(=O)O', 'tokens_incl_bos_eos': 13, 'formula': 'C3N1O2'}
+{'smiles': 'c1ccccc1O', 'tokens_incl_bos_eos': 11, 'formula': 'C6O1'}
+{'max_tokens': 200, 'max_position_embeddings': 202, 'max_molecules_per_call': 64}
+{'probe': 'CCCC(CCO', 'rejected': "molecules[0] ('CCCC(CCO') failed SMILES syntax checks: 1 unclosed parenthesis(s)"}
+{'probe': 'CC*C', 'rejected': "molecules[0] ('CC*C') failed SMILES syntax checks: characters outside the accepted SMILES set: ['*']"}
+{'probe': 'c1ccccO', 'rejected': "molecules[0] ('c1ccccO') failed SMILES syntax checks: unpaired ring-closure digit(s): ['1']"}
+{'probe': ' CCO', 'rejected': 'molecules[0] has leading or trailing whitespace; strip it first'}
+{'too_long': 'molecules[0] tokenizes to 201 tokens; the ceiling is 200 (max_position_embeddings 202 minus <bos> and <eos>). A truncated SMILES i'}
+{'verdict': 'accepted', 'n_molecules': 4, 'token_ceiling_checked': True, 'requires_remote_code': True}
+[colab] Executing cell 9/14 - molformer_chemistry-22...
+{'n_molecules': 8, 'dimension': 768, 'tokens': [10, 17, 11, 15, 12, 9, 15, 9], 'pooling': 'mean of the last hidden state over non-padding tokens'}
+{'deterministic_eval': True, 'identical_vectors_on_a_second_identical_call': True}
+{'single_molecule_vs_padded_batch_max_abs_diff': 1.3113021850585938e-06, 'tolerance': 0.0001, 'within_tolerance': True, 'cause': 'float32 rounding from padding and batch shape, not random features'}
+{'mean_cosine_within_class': 0.8288, 'mean_cosine_between_classes': 0.6905, 'note': 'inspection only; embeddings are unlabelled representations'}
+wrote outputs/molformer_chemistry_embeddings.csv
+[colab] Executing cell 10/14 - molformer_chemistry-24...
+{'baseline': 'majority-class', 'predicted_label': 'branched', 'accuracy': 0.5, 'macro_f1': 0.3333}
+{'baseline': 'molecular-formula lookup', 'distinct_train_formulas': 25, 'ambiguous_train_formulas': 11, 'eval_formulas_unseen_in_train': 9, 'accuracy': 0.25, 'macro_f1': 0.2}
+{'rule': 'one-character rule (default sample only): a ( in the SMILES means branched', 'correct': 16, 'of': 16, 'accuracy': 1.0}
+[colab] Executing cell 11/14 - molformer_chemistry-27...
+
+Loading weights:   0%|          | 0/207 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 207/207 [00:00<00:00, 6942.44it/s]
+[transformers] [1mMolformerForSequenceClassification LOAD REPORT[0m from: /content/weights/molformer-xl-both-10pct
+Key                                | Status     | 
+-----------------------------------+------------+-
+lm_head.transform.LayerNorm.weight | UNEXPECTED | 
+lm_head.transform.LayerNorm.bias   | UNEXPECTED | 
+lm_head.transform.dense.weight     | UNEXPECTED | 
+lm_head.decoder.weight             | UNEXPECTED | 
+lm_head.transform.dense.bias       | UNEXPECTED | 
+classifier.dense2.weight           | MISSING    | 
+classifier.dense.weight            | MISSING    | 
+classifier.dense2.bias             | MISSING    | 
+classifier.dense.bias              | MISSING    | 
+classifier.out_proj.bias           | MISSING    | 
+classifier.out_proj.weight         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+{'method': 'gradient fine-tuning (AdamW) of the classification head and the last 2 encoder layer(s)', 'trainable_parameters': 8275970, 'total_parameters': 45557762, 'precision': 'float32', 'device': 'cuda:0', 'seconds': 4.64}
+{'epoch': 1, 'train_loss': 0.482904, 'n_batches': 5, 'val_accuracy': 1.0, 'val_macro_f1': 1.0}
+{'epoch': 2, 'train_loss': 0.182822, 'n_batches': 5, 'val_accuracy': 1.0, 'val_macro_f1': 1.0}
+{'epoch': 3, 'train_loss': 0.024827, 'n_batches': 5, 'val_accuracy': 1.0, 'val_macro_f1': 1.0}
+{'epoch': 4, 'train_loss': 0.007268, 'n_batches': 5, 'val_accuracy': 1.0, 'val_macro_f1': 1.0}
+[colab] Executing cell 12/14 - molformer_chemistry-29...
+{'split': 'validation', 'n': 12, 'accuracy': 1.0, 'macro_f1': 1.0, 'auroc': 1.0}
+{'split': 'test', 'n': 16, 'accuracy': 1.0, 'macro_f1': 1.0, 'auroc': 1.0}
+{'class': 'branched', 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'support': 8, 'predicted': 8}
+{'class': 'linear', 'precision': 1.0, 'recall': 1.0, 'f1': 1.0, 'support': 8, 'predicted': 8}
+{'delta_vs_majority': {'accuracy': 0.5, 'macro_f1': 0.6667}, 'report': 'outputs/molformer_chemistry_evaluation_report.json'}
+[colab] Executing cell 13/14 - molformer_chemistry-32...
+{'new_source': 'freshly generated isomer pairs (seed 7)', 'decision_rule': 'argmax over softmax(logits); scores are softmax outputs, not calibrated probabilities'}
+{'id': 'lin-000', 'smiles': 'CCCCCCCN', 'predicted': 'linear', 'score': 0.9984, 'true_label': 'linear'}
+{'id': 'bra-000', 'smiles': 'CCC(C)CCCN', 'predicted': 'branched', 'score': 1.0, 'true_label': 'branched'}
+{'id': 'lin-001', 'smiles': 'CCCCCCCCCCCCCN', 'predicted': 'linear', 'score': 0.9989, 'true_label': 'linear'}
+{'id': 'bra-001', 'smiles': 'CCCCCC(C)CCCCCCN', 'predicted': 'branched', 'score': 0.9997, 'true_label': 'branched'}
+{'id': 'lin-002', 'smiles': 'CCCCCCCCCN', 'predicted': 'linear', 'score': 0.9981, 'true_label': 'linear'}
+{'id': 'bra-002', 'smiles': 'CCC(C)CCCCCN', 'predicted': 'branched', 'score': 0.9999, 'true_label': 'branched'}
+{'matches': 6, 'of': 6, 'note': 'sanity check on generated labels, not an evaluation'}
+{'format': 'org.valcorza.molformer-chemistry.adapter.v1', 'base_model': {'model_id': 'ibm-research/MoLFormer-XL-both-10pct', 'model_revision': '361063d0ad524ef77cf39b08469f6be770dc550f', 'license': 'apache-2.0'}, 'requires_remote_code': True, 'deterministic_eval': True, 'n_tensors': 50, 'serving_state_tensors': 12, 'files': [{'path': 'adapter.safetensors', 'bytes': 33208144, 'sha256': '26f4b98733a75fe174784b62aa31cac6c92bdf9ac4c252f74797adfc5b404518'}]}
+[transformers] You are using a model of type `molformer` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+
+Loading weights:   0%|          | 0/207 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 207/207 [00:00<00:00, 5092.68it/s]
+[transformers] [1mMolformerModel LOAD REPORT[0m from: /content/weights/molformer-xl-both-10pct
+Key                                | Status     |  | 
+-----------------------------------+------------+--+-
+lm_head.transform.LayerNorm.weight | UNEXPECTED |  | 
+lm_head.transform.LayerNorm.bias   | UNEXPECTED |  | 
+lm_head.transform.dense.weight     | UNEXPECTED |  | 
+lm_head.decoder.weight             | UNEXPECTED |  | 
+lm_head.transform.dense.bias       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+{'reload_parity': 'PASS', 'labels_equal': True, 'max_abs_score_diff': 0.0}
+
+Loading weights:   0%|          | 0/207 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 207/207 [00:00<00:00, 5065.79it/s]
+[transformers] [1mMolformerForSequenceClassification LOAD REPORT[0m from: /content/weights/molformer-xl-both-10pct
+Key                                | Status     | 
+-----------------------------------+------------+-
+lm_head.transform.LayerNorm.weight | UNEXPECTED | 
+lm_head.transform.LayerNorm.bias   | UNEXPECTED | 
+lm_head.transform.dense.weight     | UNEXPECTED | 
+lm_head.decoder.weight             | UNEXPECTED | 
+lm_head.transform.dense.bias       | UNEXPECTED | 
+classifier.dense2.weight           | MISSING    | 
+classifier.dense.weight            | MISSING    | 
+classifier.dense2.bias             | MISSING    | 
+classifier.dense.bias              | MISSING    | 
+classifier.out_proj.bias           | MISSING    | 
+classifier.out_proj.weight         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+[colab] Executing cell 14/14 - molformer_chemistry-35...
+outputs/:
+  - outputs/molformer_chemistry_adapter/adapter.safetensors (32429.8 KB)
+  - outputs/molformer_chemistry_adapter/manifest.json (5.7 KB)
+  - outputs/molformer_chemistry_embeddings.csv (63.2 KB)
+  - outputs/molformer_chemistry_evaluation_report.json (4.4 KB)
+  - outputs/molformer_chemistry_predictions.csv (0.4 KB)
+  - outputs/molformer_chemistry_result.json (15.0 KB)
+  - outputs/molformer_chemistry_sample_dataset.csv (2.0 KB)
+[colab] Saving notebook with outputs to '/home/kurt/colab-runs/molformer-chemistry-pipeline-9c8440b-80f090/molformer_chemistry_colab_9c8440b_colab-cli-t4_output.ipynb'...

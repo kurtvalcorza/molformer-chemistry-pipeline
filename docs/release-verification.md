@@ -3,7 +3,7 @@
 `tutorials/molformer_chemistry_colab.ipynb` (`E2E`, **standalone** carrier) is a **release candidate** until the exact
 notebook revision has executed top-to-bottom in a clean supported runtime. Unit tests, JSON validation, code-cell
 compilation, the generator parity checks and `tools/validate_release_assets.py` are necessary checks but are **not**
-runtime evidence under DIMER Notebook Specification 2.0 (REL8). This file is the durable release-gate record.
+runtime evidence under DIMER Notebook Specification 2.2 (REL8). This file is the durable release-gate record.
 
 DIMER hosting has a **separate** gate that this document does not cover: the checkpoint requires
 `trust_remote_code=True`, which MODEL_ASSET_SPEC §12 RC6 treats as not ordinarily qualified. A clean-runtime PASS here
@@ -16,14 +16,13 @@ CI runs `tools/validate_release_assets.py`, which checks:
 - notebook JSON parses; every code cell compiles as plain Python (no `%`/`!` magics); no persisted outputs or
   execution counts; no unresolved placeholder markers; every code cell is preceded by an explanatory markdown cell;
 - exactly one tutorial notebook, named in `tutorials/README.md` with its `E2E` profile, the notebook-spec version
-  and the standalone carrier; `metadata.dimer` declares that profile, spec `2.0`, a §3.3 pedagogical mode,
+  and the standalone carrier; `metadata.dimer` declares that profile, spec `2.2`, a §3.3 pedagogical mode,
   `standalone: true` and `generated_from` (repository, revision, module SHA-256, generator);
 - the standalone carrier (ST1–ST8, PAR1–PAR4): no clone, repository install or repository import on the primary
   path; one cell per carried module (`pipeline.py`, `samples.py`, `metrics.py`), each equal to its source after the
   generator's documented rewrites; the inline `MANIFEST` equal to the committed snapshot manifest and the inline
   `PINS` equal to the `pyproject.toml` runtime pins; the notebook byte-identical (on LF) to
-  `tools/build_notebook.py` output for its recorded revision; the pinned-install cell with its
-  restart-on-stale-import guard; `NOTEBOOK_SOURCE` recorded in exports;
+  `tools/build_notebook.py` output for its recorded revision; the single kernel cell that builds (or reuses, by lock digest) the isolated hash-locked uv environment and routes every later cell to it, with no `pip install` into the kernel and no restart request; `NOTEBOOK_SOURCE` recorded in exports;
 - `MODEL_ID`/`MODEL_REVISION` bound only in the carried module cell (and repeated in the inline manifest, which the
   notebook asserts against the module before fetching), the revision a 40-hex immutable commit, and the same
   identity string in `README.md`, `MODEL_CARD.md` and `docs/WEIGHTS.md` with no stray revisions;
@@ -31,11 +30,13 @@ CI runs `tools/validate_release_assets.py`, which checks:
   fleet validator): `trust_remote_code=True` appears in the carried module cell and **nowhere else** in the notebook;
   `src/molformer_chemistry_pipeline/pipeline.py` is where it is enabled and names both executed files;
   `configuration_molformer.py` and `modeling_molformer.py` are entries in the snapshot manifest; and
-  `verify_snapshot` runs **before** the model libraries are imported;
+  `verify_snapshot` runs **before** the model libraries are imported; and the notebook markdown never claims that no
+  remote model code is executed, while Section 3 names `trust_remote_code=True`, both executed files and the
+  `deterministic_eval` override (review finding MOL-M2);
 - the profile-specific public-API calls (`stage_missing_files`, `verify_snapshot`,
   `MolformerPipeline.from_pretrained(weights_dir=...)`, `validate_dataset`, `split_dataset`, `write_dataset_csv`,
-  the shared-formula assertion, `pipe.token_count`, `validate_inputs`, `pipe.embed` with its repeated-call
-  determinism check, `majority_baseline`, `formula_baseline`, `pipe.adapt` with its explicit hyperparameters,
+  the shared-formula assertion, `pipe.token_count`, `validate_inputs`, `pipe.embed` with its asserted
+  like-for-like repeated-call determinism check, `majority_baseline`, `formula_baseline`, `pipe.adapt` with its explicit hyperparameters,
   `pipe.evaluate` on both the validation and the test split, `pipe.classify`, `pipe.save_artifact` with its
   `serving_state_tensors` report, `MolformerPipeline.from_artifact` and the reload-parity assertion), the six
   expected `outputs/` paths, the learner-facing statements (scores are not calibrated probabilities, validation is
@@ -77,10 +78,13 @@ Before changing the registry status from `Candidate` to `Release-grade`:
 4. verify that Section 1 reports `NOTEBOOK_SOURCE.repository_revision` equal to the revision recorded in
    `metadata.dimer.generated_from` and that the installed core package versions equal the inline `PINS`
    (= `pyproject.toml`): `torch==2.14.0`, `torchvision==0.29.0`, `torchaudio==2.11.0`, **`transformers==5.17.0`**,
-   `huggingface-hub==1.32.0`, `tokenizers==0.23.2`, `safetensors==0.8.0`, `numpy==2.5.3`. A runtime that resolved
-   Transformers 4.x has not exercised the supported path and its result does not count;
+   `huggingface-hub==1.32.0`, `tokenizers==0.23.2`, `safetensors==0.8.0`, `numpy==2.5.3`, installed by Section 1 into
+   an isolated environment built from the hash-locked `tutorials/requirements-colab.lock.txt`. Nothing is installed
+   into the kernel and no restart is expected; a run that needed a restart is not a one-pass Run all and does not
+   count as release evidence (REL2/REL11). A runtime that resolved Transformers 4.x has not exercised the supported
+   path and its result does not count;
 5. verify every default-path stage completes:
-   - pinned runtime installed from the inline `PINS` with no GitHub access;
+   - the isolated environment built (or reused, by lock digest) from the hash lock with no GitHub access;
    - the three carried module cells execute (defining `MolformerPipeline`, `verify_snapshot`, `stage_missing_files`,
      `validate_inputs`, `check_smiles_syntax`, `validate_dataset`, `split_dataset`, `generate_sample_dataset`,
      `write_dataset_csv`, `molecular_formula`, `formula_string`, `classification_metrics`, `majority_baseline`,
@@ -89,15 +93,19 @@ Before changing the registry status from `Candidate` to `Release-grade`:
      reporting the 7 entries fetched from `ibm-research/MoLFormer-XL-both-10pct` at the immutable revision — including
      `configuration_molformer.py` and `modeling_molformer.py` — and `verify_snapshot` reporting 7 verified files
      **before** the model loads and before the remote code is imported;
-   - the load report naming the remote-code requirement, `deterministic_eval=True`, and 45,557,762 total parameters
-     (44,375,040 in the base encoder; the classification head is newly initialised and the report says so);
+   - the Section 3 load summary printing `remote_code_executed: True`, both verified remote-code files, the upstream
+     `deterministic_eval: False` beside the package's `True`, and the base encoder's parameter count (the
+     classification head is newly initialised in Section 8, whose report gives 45,557,762 total parameters);
    - the dataset manifest printed with 64 records, classes `['branched', 'linear']`, 32/32 class counts, 32 distinct
      molecular formulas with **all 32 shared across both classes**, the ceilings and the digest, and the splits
-     36 / 12 / 16;
+     36 / 12 / 16 (`split_dataset` refuses a split whose validation or test part falls below 8 records or 3 per class);
    - `pipe.embed` reporting 768-dimensional vectors, writing `outputs/molformer_chemistry_embeddings.csv`, and the
-     determinism cell asserting that a second call returns the identical vector;
+     determinism cell embedding the same eight molecules twice, printing
+     `identical_vectors_on_a_second_identical_call: True` and asserting it; the single-molecule vs padded-batch
+     difference is printed against a `1e-4` tolerance for inspection only;
    - both baselines reported on the test split (majority accuracy 0.5 on the balanced split; the molecular-formula
-     baseline at or below chance, by construction);
+     baseline at or below chance, by construction), and the one-character rule (`(` in the SMILES means branched)
+     printed for the default sample;
    - `pipe.adapt` reporting the trainable/total parameter counts and a four-epoch history with per-epoch validation
      metrics;
    - `pipe.evaluate` reporting validation and test accuracy, macro-F1, AUROC and per-class rows, and writing
@@ -124,7 +132,7 @@ A known-failing default path in the supported runtime blocks release (REL11).
 
 | Notebook | Commit / notebook blob | Date (UTC) | Executor | Outcome |
 |---|---|---|---|---|
-| `molformer_chemistry_colab.ipynb` | `7c2ab16` / `dfb259ef4801` | 2026-09-18 | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, empty Hugging Face cache, no repository checkout) | **PASS** — 13/13 code cells after the expected fresh-process restart following dependency installation; supported clean-runtime evidence including download, digest verification and the pinned remote-code boundary |
+| `molformer_chemistry_colab.ipynb` | `7c2ab16` / `dfb259ef4801` | 2026-09-18 | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, empty Hugging Face cache, no repository checkout) | **Restart-dependent — not a one-pass Run all (REL2/REL11)** — the in-kernel `pip install` of Section 1 required a fresh-process restart before the remaining cells ran; after that restart, 13/13 code cells; download, digest verification and the pinned remote-code boundary exercised. History, not release evidence |
 | `molformer_chemistry_colab.ipynb` | `daaa53f` / `dfb259ef` | 2026-09-18 | Local pre-flight harness (Windows, CPython 3.12.10, CPU, `google.colab` shim, pins pre-installed) | PASS — pre-flight only, **not** promotion evidence |
 
 ## Recorded executions
@@ -136,13 +144,15 @@ runtime, not general estimates.
 
 | Date (UTC) | Commit / notebook blob | Executor | Path exercised | Wall | Outcome |
 |---|---|---|---|---|---|
-| 2026-09-18 | `7c2ab16` / `dfb259ef4801` | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, clean cache, `transformers 5.17.0`) | Default sample path (download and verify 7 files including both remote-code modules → validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload) | 208.7 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. One expected fresh-process restart followed the install cell. |
+| 2026-09-18 | `7c2ab16` / `dfb259ef4801` | Kaggle batch kernel `dimer-nb2-molformer-chemistry` v1 (Python 3.12.13, Tesla T4, clean cache, `transformers 5.17.0`) | Default sample path (download and verify 7 files including both remote-code modules → validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload) | 208.7 s | **Restart-dependent — not a one-pass Run all (REL2/REL11)** — the in-kernel `pip install` of Section 1 required a fresh-process restart before the remaining cells ran; after that restart, 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. History, not release evidence |
+| 2026-10-08 (09:36:18 UTC start) | commit `9c8440b` / blob `7b0975db8ddd` (`NOTEBOOK_SOURCE.repository_revision` `6cde8bd`, the source revision the notebook was generated from, equal to `metadata.dimer.generated_from.revision`; `6cde8bd..9c8440b` is the review-fix commit itself; embedded `module_sha256` `1783c35ea4be…`, generator `build_notebook.py/2.2`, `notebook_spec` 2.2) | Colab CLI 0.7.4 sequential execution (`colab exec -f`, not a browser Run all; order from `exec.log`, no execution counts), fresh Colab Tesla T4 VM (session `suite-molformer-9c8440b-80f0`), committed blob fetched at the 40-char SHA and Git-blob verified, no repository checkout, empty Hugging Face cache; kernel Python 3.13.15; isolated `uv` environment Python 3.12.12, 56 locked packages, built in 56 s; torch 2.14.0+cu130, transformers 5.17.0, safetensors 0.8.0; device `cuda:0` | default settings only (`USE_BYOD = False`, `EPOCHS = 4`, `LEARNING_RATE = 1e-4`, `BATCH_SIZE = 8`, `TRAINABLE_LAYERS = 2`, `SEED = 42`); all 7 snapshot files fetched from `ibm-research/MoLFormer-XL-both-10pct` at `361063d0ad52` and verified before the remote code was imported | 99.8 s | **One pass, no restart, 0 errors** — 14/14 code cells in order (`exec.log`); code cells 3–5 (the carried modules) print nothing by design; load summary `remote_code_executed: True`, both remote-code files verified, upstream `deterministic_eval: False` vs package `True`, 44,375,040 encoder parameters; splits 36 / 12 / 16 with 32 of 32 formulas shared; four syntax rejections and the 201-token refusal; Section 6 `identical_vectors_on_a_second_identical_call: True` (asserted), single-molecule vs padded-batch difference 1.31e-06 within the 1e-4 tolerance; baselines majority 0.5 / 0.3333, formula 0.25 / 0.2 (9 test formulas unseen), one-character rule 16 / 16; 8,275,970 of 45,557,762 parameters trainable, train loss 0.4829 → 0.0073 over 4 epochs, validation accuracy 1.0 from epoch 1; test accuracy / macro-F1 / AUROC 1.0 / 1.0 / 1.0 (n = 16); 6 / 6 new molecules matched; adapter 33,208,144 bytes with 12 serving-state tensors, reload parity labels equal, max abs score difference 0.0; stderr carries the Hub's unauthenticated-request notice, Transformers' `molformer` model-type note and its load reports (`lm_head.*` UNEXPECTED; the new classifier keys MISSING when the classifier is built), as Section 3 describes. Evidence: `docs/execution-evidence/2026-10-08-9c8440b/` (executed notebook sha256 `0ced64efe8bb…`, `run_summary.json` `b2d8a99ba023…`, `exec.log` `050996c33b48…`). BYOD and the optional experiments not exercised. |
 | 2026-09-18 | `daaa53f` / `dfb259ef` | Local pre-flight harness (Windows, CPython 3.12.10, CPU float32, `transformers 5.17.0`) | Default sample path (validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload); weights pre-staged, so `stage_missing_files` fetched 0 of 7 entries and `verify_snapshot` verified all 7 | 10.5 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. Pre-flight; hosted clean-runtime run still required |
 
 ## Current status
 
-The exact notebook blob passed the complete default path in a clean Kaggle Tesla T4 runtime with an empty Hugging Face
-cache and no repository checkout. The run exercised the download-and-stage leg and verified both pinned remote-code
-files before import, satisfying the hosted clean-runtime gate for the recorded revision. The maintainer approved
-promotion on 2026-09-18, so the repository is **Release-grade** for this verified tutorial carrier. The execution
-record remains sample-sanity evidence, not a benchmark or production-readiness claim.
+**Candidate.** The notebook now builds an isolated, hash-locked environment in Section 1 (generator `/2.2`) instead of
+installing into the kernel, and the review fixes (MOL-M1..M4, MOL-m1..m5) changed the carried modules and the
+notebook, so its blob is new; the review-fix blob `7b0975db8ddd` (commit `9c8440b`) completed one pass with no restart and 0 errors on a fresh Colab Tesla T4 on 2026-10-08 (Colab CLI sequential execution, 14/14 code cells, 99.8 s; test accuracy / macro-F1 / AUROC 1.0 (n = 16) against majority 0.5 and formula 0.25, repeated embeddings identical, reload parity 0.0) — record below. The 2026-09-18 Kaggle T4 run of blob
+`dfb259ef4801` needed a restart after the install cell, so it was never a one-pass Run all and is kept above as
+history, not as release evidence. Release step REL12 (BYOD on a hosted runtime) has not been run, so the status
+stays **Candidate**. Execution records remain sample-sanity evidence, not a benchmark or production-readiness claim.
