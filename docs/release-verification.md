@@ -1,5 +1,7 @@
 # Release verification
 
+**Current status (2026-10-25): Candidate, hosted runs pending (REL14).** The current notebook `tutorials/molformer_chemistry_colab.ipynb` is blob `6eafc6a0dc1183b2b28dcf81027a2ff9e328b9c0`, regenerated from generator commit `cfadd43` for the tier C review findings of row 53. No hosted run of this blob exists yet; every run recorded below is evidence for an earlier blob only. Changes: T53-1 (REL13) makes the worked answers quote the Colab T4 run of blob `7b0975db` (`9c8440b`, 2026-10-08: train loss 0.4829 → 0.0073) and labels the earlier Kaggle/CPU runs and the optional-experiment numbers as runs of an earlier blob; T53-2 (DAT9) states that the generated small alcohols are likely PubChem compounds and so likely in the pretraining corpus (inferred, not verified); T53-3 replaces "independent" split wording; T53-4/T53-5 declare Notebook Specification 2.5 with `notebook_kind: TUTORIAL`, a use notice, IEEE references and the documented `DIMER_ISOLATED_ENV`. Local checks (generator `--check`, `tools/validate_release_assets.py`, ruff, pytest against the `main` baseline) are source checks, not clean-runtime evidence.
+
 `tutorials/molformer_chemistry_colab.ipynb` (`E2E`, **standalone** carrier) is a **release candidate** until the exact
 notebook revision has executed top-to-bottom in a clean supported runtime. Unit tests, JSON validation, code-cell
 compilation, the generator parity checks and `tools/validate_release_assets.py` are necessary checks but are **not**
