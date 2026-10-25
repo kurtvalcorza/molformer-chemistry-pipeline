@@ -259,7 +259,7 @@ def test_mol_m3_minor_byod_names(nb: dict) -> None:
 
 
 def test_mol_m4_minor_declarations_and_counts(nb: dict) -> None:
-    assert nb["metadata"]["dimer"]["notebook_spec"] == "2.2"
+    assert nb["metadata"]["dimer"]["notebook_spec"] == "2.5" and nb["metadata"]["dimer"]["notebook_kind"] == "TUTORIAL"
     md = _markdown(nb)
     assert "{{id, smiles, label}}" not in md and "{id, smiles, label}" in md
     assert "DIMER_NOTEBOOK_CI_PREINSTALLED" in md
