@@ -120,6 +120,12 @@ TEMPLATE = {
         "and ZINC; this checkpoint is the variant trained on a 10 % sample of both). Its notable architectural choice is "
         "**linear attention with random feature maps**, which is why it scales to that corpus — and why it behaves differently "
         "from an ordinary transformer in one respect that matters for reproducibility, explained in Section 3.\n\n"
+        "**What the checkpoint may already have seen (DAT9).** The tutorial's molecules are small generated alcohols and "
+        "their isomers (for example `CCCCCCCO`). Molecules this simple are almost certainly PubChem compounds, so they are "
+        "**likely to be in the pretraining corpus** [1], [2]. This is inferred from the model card's corpus description; no "
+        "molecule was checked against the 10 % sample. The labels come from this notebook's own generator rule, not from any "
+        "pretraining target, so the overlap means the encoder has probably seen these strings, not their labels. That is "
+        "one more reason to read the perfect test scores as a check of the adaptation contract, not of chemical knowledge.\n\n"
         "This tutorial adapts it to a molecular-property task. The tutorial dataset is synthetic but chemically literal: every "
         "molecule is paired with a **constitutional isomer** of itself — the same molecular formula, the same atoms, a "
         "different skeleton. One member is an unbranched chain (`CCCCCCCO`); the other carries one of those carbons as a "
@@ -127,7 +133,7 @@ TEMPLATE = {
         "chance, by construction, which is what makes the fine-tuned model's result worth reading."
     ),
     "guided": {"opening": [(
-        "**Who this notebook is for.** A learner who knows basic Python, has used Colab or Jupyter and has met the idea of a classifier, and wants to see how a chemical language model reads molecules written as SMILES, how to test whether it has learned structure rather than composition, and how to fine-tune it on a small labelled set and export the result. The audience is chemistry and data-science students and practitioners preparing their own molecular-property data; no prior experience with MoLFormer, transformers or fine-tuning is assumed — each term is explained where it first matters and again in the **Glossary**. CPU is enough: the default fine-tuning takes seconds.\n\n**Input → Model → Output.**\n\n| | Embeddings | Bounded fine-tuning and classification |\n|---|---|---|\n| Input | SMILES strings (at most 200 tokens each) | labelled records `{{id, smiles, label}}`: 64 generated constitutional-isomer molecules (36 train, 12 validation, 16 test) or your own CSV/JSON/JSONL |\n| Model | the MoLFormer-XL encoder (linear attention with random feature maps, loaded with deterministic evaluation) | the same encoder with a new classification head; the head and the last `TRAINABLE_LAYERS` encoder layers are trained with AdamW |\n| Output | one 768-dimensional mean-pooled vector per molecule | an argmax label and softmax scores per molecule, test accuracy / macro-F1 / AUROC beside two baselines, and a safetensors adapter that reloads with identical scores |\n\n**How to use this notebook.** Choose any runtime (CPU is enough), then **Runtime → Run all**. Run all completes in one pass: Section 1 installs nothing into the notebook's own Python, so no restart is needed (the recorded hosted run of the previous version needed one; this version removes it). Sections 1–3 are **infrastructure** — the isolated environment, the carried modules and the verified snapshot with its remote code — and their cells are collapsed; you may run them without studying them. The learning path starts in Section 4. Form fields (`# @param`) are the only values meant to be edited, and the defaults reproduce the recorded run. Before each principal result the notebook asks you to **Predict**; after it comes a collapsible **Check your reasoning** with a worked answer from the recorded runs (the Kaggle T4 run of 18 September 2026 and the local CPU pre-flight, which agree). **Troubleshooting**, a **Glossary** and a **Conclusion** template are at the end. Writing your predictions down is optional.\n\n**Roadmap:** 1–3 infrastructure → 4 the isomer dataset, validation and split *(evaluation practice: a dataset built to defeat a shortcut)* → 5 how SMILES become tokens *(core concept)* → 6 embeddings *(core concept: representation, not prediction)* → 7 two baselines *(evaluation practice)* → 8 bounded fine-tuning *(core concept: what is trained)* → 9 held-out evaluation → 10 new molecules, export and fresh reload *(engineering)* → 11 result export → conclude."
+        "**Who this notebook is for.** A learner who knows basic Python, has used Colab or Jupyter and has met the idea of a classifier, and wants to see how a chemical language model reads molecules written as SMILES, how to test whether it has learned structure rather than composition, and how to fine-tune it on a small labelled set and export the result. The audience is chemistry and data-science students and practitioners preparing their own molecular-property data; no prior experience with MoLFormer, transformers or fine-tuning is assumed — each term is explained where it first matters and again in the **Glossary**. CPU is enough: the default fine-tuning takes seconds.\n\n**Input → Model → Output.**\n\n| | Embeddings | Bounded fine-tuning and classification |\n|---|---|---|\n| Input | SMILES strings (at most 200 tokens each) | labelled records `{{id, smiles, label}}`: 64 generated constitutional-isomer molecules (36 train, 12 validation, 16 test) or your own CSV/JSON/JSONL |\n| Model | the MoLFormer-XL encoder (linear attention with random feature maps, loaded with deterministic evaluation) | the same encoder with a new classification head; the head and the last `TRAINABLE_LAYERS` encoder layers are trained with AdamW |\n| Output | one 768-dimensional mean-pooled vector per molecule | an argmax label and softmax scores per molecule, test accuracy / macro-F1 / AUROC beside two baselines, and a safetensors adapter that reloads with identical scores |\n\n**How to use this notebook.** Choose any runtime (CPU is enough), then **Runtime → Run all**. Run all completes in one pass: Section 1 installs nothing into the notebook's own Python, so no restart is needed (the recorded hosted run of the previous version needed one; this version removes it). Sections 1–3 are **infrastructure** — the isolated environment, the carried modules and the verified snapshot with its remote code — and their cells are collapsed; you may run them without studying them. The learning path starts in Section 4. Form fields (`# @param`) are the only values meant to be edited, and the defaults reproduce the recorded run. Before each principal result the notebook asks you to **Predict**; after it comes a collapsible **Check your reasoning** with a worked answer quoted from a recorded run, not re-run here: **the recorded run** is the Colab T4 run of blob `7b0975db` (commit `9c8440b`, 8 October 2026). Earlier runs (the Kaggle T4 run of 18 September 2026 and a local CPU pre-flight, both of an earlier blob) agree on everything except the loss values. **Troubleshooting**, a **Glossary** and a **Conclusion** template are at the end. Writing your predictions down is optional.\n\n**Roadmap:** 1–3 infrastructure → 4 the isomer dataset, validation and split *(evaluation practice: a dataset built to defeat a shortcut)* → 5 how SMILES become tokens *(core concept)* → 6 embeddings *(core concept: representation, not prediction)* → 7 two baselines *(evaluation practice)* → 8 bounded fine-tuning *(core concept: what is trained)* → 9 held-out evaluation → 10 new molecules, export and fresh reload *(engineering)* → 11 result export → conclude."
     )]},
     "learning_objectives": (
         "install the pinned runtime; inspect the carried pipeline, dataset and metrics modules; stage and digest-verify an "
@@ -136,7 +142,7 @@ TEMPLATE = {
         "embeddings identical; validate SMILES syntactically and split a labelled "
         "dataset without leakage; read how SMILES become tokens; extract mean-pooled molecule embeddings; measure "
         "majority-class and molecular-formula baselines; run a bounded fine-tuning with explicit hyperparameters; evaluate "
-        "accuracy, macro-F1 and AUROC on an independent test split; classify new molecules; and export a safetensors adapter "
+        "accuracy, macro-F1 and AUROC on a test split held out from training and monitoring; classify new molecules; and export a safetensors adapter "
         "that reloads against the pinned base with verified parity."
     ),
     "exclusions": (
@@ -356,7 +362,7 @@ TEMPLATE = {
         },
         {
             "md": (
-                "<details><summary>Check your reasoning</summary>In the recorded runs the majority baseline scored accuracy 0.5 and macro-F1 0.3333 on the balanced 16-molecule "
+                "<details><summary>Check your reasoning</summary>In the recorded run the majority baseline scored accuracy 0.5 and macro-F1 0.3333 on the balanced 16-molecule "
                 "test split; the formula baseline scored 0.25 / 0.2 — below the majority, because formulas seen in training are "
                 "coin flips and 9 test formulas were unseen and fell back. Neither can beat chance on this dataset by construction. "
                 "The one-character rule, by contrast, scores 16 of 16: on this sample the class is visible in a single "
@@ -406,7 +412,7 @@ TEMPLATE = {
                 "`pipe.evaluate` classifies every molecule of a split and reports `accuracy`, `macro_f1` (the unweighted mean of "
                 "per-class F1, which exposes a model that ignores a class), per-class precision/recall/F1 with support, and "
                 "`auroc` (ranking quality of the positive-class score, independent of the argmax threshold). The **test split** "
-                "was never used for training or monitoring, so its numbers are the independent evidence (SPL6/SPL7). These are "
+                "was never used for training or monitoring, so its numbers are the held-out evidence (SPL6/SPL7); its molecules come from the same generator and rule as the training ones. These are "
                 "tutorial metrics on a synthetic 16-molecule split (EVAL6): one holdout, no dispersion estimate. The report, with "
                 "both baselines and the deltas against them, is written to `outputs/{stem}_evaluation_report.json`.\n\n"
                 "**Predict before running:** after four epochs, will the fine-tuned model beat both baselines on the test split? "
@@ -441,7 +447,7 @@ TEMPLATE = {
         },
         {
             "md": (
-                "<details><summary>Check your reasoning</summary>In the recorded runs train loss fell from 0.4516 to 0.0027 over four epochs, validation accuracy was 1.0 from "
+                "<details><summary>Check your reasoning</summary>In the recorded run (blob `7b0975db`) train loss fell from 0.4829 to 0.0073 over four epochs, validation accuracy was 1.0 from "
                 "epoch 1, and the test split scored accuracy, macro-F1 and AUROC all 1.0 (n = 16) against 0.5 and 0.25 for the "
                 "baselines. A perfect score on 16 synthetic molecules is a saturated tutorial task: it says the adaptation "
                 "contract works, not that the model predicts any real property. And the one-character rule of Section 7 also "
@@ -504,7 +510,7 @@ TEMPLATE = {
         },
         {
             "md": (
-                "<details><summary>Check your reasoning</summary>Identical labels, and in the recorded runs a maximum absolute score difference of 0.0 for the 6 freshly "
+                "<details><summary>Check your reasoning</summary>Identical labels, and in the recorded run a maximum absolute score difference of 0.0 for the 6 freshly "
                 "generated molecules (all 6 classified correctly). Before the 12 linear-attention feature buffers were exported "
                 "with the adapter, the same reload differed by 0.0023 — the buffers are serving state, not an afterthought.</details>"
             ),
@@ -577,7 +583,7 @@ TEMPLATE = {
         "truncating.\n\n"
         "Successful execution proves that the recorded repository revision's pipeline modules, carried in this standalone "
         "notebook, can acquire and digest-verify the pinned model **and the Python it executes**, validate the demonstrated "
-        "dataset contract, execute bounded fine-tuning, evaluate against trivial baselines on an independent split, and emit the "
+        "dataset contract, execute bounded fine-tuning, evaluate against trivial baselines on a held-out split from the same generator, and emit the "
         "shown machine-readable artifacts — without the repository being reachable. It does **not** establish benchmark "
         "superiority, production fitness, or chemical validity.\n\n"
         "**Optional experiments (they do not affect the default path).** For each one: write down a prediction, change the one "
@@ -585,8 +591,8 @@ TEMPLATE = {
         "adapter and `result.json` describe the same run), compare with the default run, and explain the difference. Restore "
         "the default value and re-run the same four sections to return.\n\n"
         "1. **A step size too small to learn.** Set `LEARNING_RATE = 1e-6` (100 times smaller). *Predict:* will the test "
-        "accuracy stay at 1.0? *What happened in our local CPU run:* train loss stayed near 0.8 for all four epochs (the "
-        "default falls to about 0.003) and test accuracy dropped to 0.25, below the 0.5 majority baseline. With such small "
+        "accuracy stay at 1.0? *What happened in a local CPU run of an earlier blob (not re-run for this one, revision not recorded):* "
+        "train loss stayed near 0.8 for all four epochs (the default falls below 0.01) and test accuracy dropped to 0.25, below the 0.5 majority baseline. With such small "
         "steps the newly initialised head hardly moves from its random start in 20 updates, so what it scores is that random "
         "start, not learning. Your exact numbers can differ on a GPU; the direction should not.\n"
         "2. **Less training on a saturated task.** Set `EPOCHS = 1`, or `TRAINABLE_LAYERS = 0` to train the head alone. "
@@ -630,11 +636,15 @@ TEMPLATE = {
         "- Reload parity: max score difference ___.\n"
         "- One change I would make before using my own data: ___.\n\n"
         "## References\n\n"
-        "- Repository README: https://github.com/kurtvalcorza/molformer-chemistry-pipeline/blob/main/README.md\n"
-        "- Repository model card: https://github.com/kurtvalcorza/molformer-chemistry-pipeline/blob/main/MODEL_CARD.md\n"
-        "- Upstream model: https://huggingface.co/{MODEL_ID}\n"
-        "- Upstream code: https://github.com/IBM/molformer\n"
-        "- Ross, J., Belgodere, B., Chenthamarakshan, V., Padhi, I., Mroueh, Y., Das, P. (2021). Large-Scale Chemical Language "
-        "Representations Capture Molecular Structure and Properties. arXiv:2106.09553. https://arxiv.org/abs/2106.09553"
+        "References follow the IEEE style.\n\n"
+        "[1] J. Ross, B. Belgodere, V. Chenthamarakshan, I. Padhi, Y. Mroueh, and P. Das, \"Large-scale chemical language "
+        "representations capture molecular structure and properties,\" *Nat. Mach. Intell.*, vol. 4, pp. 1256–1264, 2022. "
+        "[Online]. Available: https://arxiv.org/abs/2106.09553\n\n"
+        "[2] IBM, \"{MODEL_ID},\" Hugging Face model card. [Online]. Available: https://huggingface.co/{MODEL_ID}\n\n"
+        "[3] IBM, \"MoLFormer,\" upstream code, GitHub. [Online]. Available: https://github.com/IBM/molformer\n\n"
+        "[4] K. Valcorza, \"molformer-chemistry-pipeline: README,\" GitHub. [Online]. Available: "
+        "https://github.com/kurtvalcorza/molformer-chemistry-pipeline/blob/main/README.md\n\n"
+        "[5] K. Valcorza, \"molformer-chemistry-pipeline: model card,\" GitHub. [Online]. Available: "
+        "https://github.com/kurtvalcorza/molformer-chemistry-pipeline/blob/main/MODEL_CARD.md"
     ),
 }
