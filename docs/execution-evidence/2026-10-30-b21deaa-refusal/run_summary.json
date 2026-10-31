@@ -1,0 +1,71 @@
+{
+  "repo": "molformer-chemistry-pipeline",
+  "sha": "b21deaaa4c7d7183e4c14329b43936f945dca5ec",
+  "notebook": "tutorials/molformer_chemistry_colab.ipynb",
+  "blob": "26019328b4381f1e3b433d9faa5185fb74087b90",
+  "gpu": "T4",
+  "session": "suite-molformer-b21deaa-80f0",
+  "started_utc": "2026-10-30T18:12:56+00:00",
+  "runner": "Colab CLI `colab exec -f` on a fresh session (not a browser Run all)",
+  "overrides": [
+    {
+      "name": "USE_BYOD",
+      "from": "False",
+      "to": "True"
+    },
+    {
+      "name": "BYOD_PATH",
+      "from": "''",
+      "to": "'/content/sample_data/california_housing_test.csv'"
+    }
+  ],
+  "run_copy_blob": "8d085ec5adaa805a28593d8f46706a7b5792f3f7",
+  "run_copy_sha256": "191a4e3e68eeaf218496f0d3ff92fd549e67c5b85e9dfed51153e495ea777e8f",
+  "run_copy_note": "refusal run: the run copy is the committed notebook with the listed assignment overrides, cut immediately after the refusal cell and re-serialised (nbformat layout); input_unchanged compares against that copy",
+  "truncated_after_cell": "molformer_chemistry-16",
+  "refusal_cell_ref": "molformer_chemistry-16",
+  "refusal_cell_index": 7,
+  "cells_dropped": 20,
+  "code_cells_dropped": 7,
+  "original_sha256": "f2ff015781fffc8c84060f39a7f2b1dd49a79e2479a50a0dac1eef930be0d2a2",
+  "status": "[suite-molformer-b21deaa-80f0] gpu-t4-s-ass1c3-1oxp3zskyskq1 | Hardware: T4 | Shape: Standard | Variant: GPU | Status: IDLE",
+  "exec_exit_code": 0,
+  "stopped": true,
+  "stop_verified": true,
+  "wall_s": 91.7,
+  "input_unchanged": true,
+  "executed_file": "molformer_chemistry_colab_b21deaa_colab-cli-t4_output.ipynb",
+  "log_cells": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "log_total": 7,
+  "code_cells": 7,
+  "executed_cells": 4,
+  "errors": [
+    {
+      "cell": "molformer_chemistry-16",
+      "ename": "IsolatedCellRefusal",
+      "evalue": "california_housing_test.csv: ValueError: CSV header ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'median_house_value'] is missing required column(s) ['id', 'smiles', 'label']; fix the input and run this cell again (the "
+    }
+  ],
+  "execution_counts": [],
+  "sequential": null,
+  "executed_sha256": "4d3d6f70718cfd5c57e528da1dcad4c84a0489e6da78f5c08e88edaff5028a2f",
+  "log_sequential_complete": true,
+  "mode": "expect_refusal",
+  "refusal_line": "Refused: california_housing_test.csv: ValueError: CSV header ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'median_house_value'] is missing required column(s) ['id', 'smiles', 'label']; fix the input and run this cell again (the earlier results of this session and their outputs/ files were removed).",
+  "halting_cell_index": 7,
+  "halting_cell_id": "molformer_chemistry-16",
+  "error_cells": [
+    7
+  ],
+  "refusal_fail_reasons": [],
+  "refusal_ok": true,
+  "verdict": "PASS"
+}
