@@ -1,0 +1,34 @@
+[colab] Parsing notebook '<local-run-dir>/molformer_chemistry_colab_b21deaa_colab-cli-t4.ipynb'...
+[colab] Executing cell 1/7 - Infrastructure: build (or reuse) the isolated environment and route later cells to it...
+{'isolated_environment': '/content/dimer_isolated_env_cbaf70c710fc', 'reused': False, 'isolated_python': '3.12.12', 'kernel_python': '3.13.16', 'locked_packages': 56, 'setup_seconds': 55}
+{'routed_to': '/content/dimer_isolated_env_cbaf70c710fc/bin/python', 'worker_pid': 2947, 'worker_reused': False}
+[colab] Executing cell 2/7 - Infrastructure: record the runtime...
+{'notebook_source': {'repository': 'molformer-chemistry-pipeline', 'repository_revision': 'e96b94dd0778af63b015c0d19aa7848dac89e9e3', 'embedded_module': 'src/molformer_chemistry_pipeline/pipeline.py', 'embedded_modules': ['src/molformer_chemistry_pipeline/pipeline.py', 'src/molformer_chemistry_pipeline/samples.py', 'src/molformer_chemistry_pipeline/metrics.py'], 'module_sha256': '1783c35ea4be6e6c9c614324c2cbd9c99a376a67182a137370f352362f8da134', 'generator': 'build_notebook.py/2.2', 'notebook_spec': '2.5'}, 'python': '3.12.12', 'executable': '/content/dimer_isolated_env_cbaf70c710fc/bin/python', 'torch': '2.14.0+cu130', 'transformers': '5.17.0', 'safetensors': '0.8.0', 'cuda': True}
+[colab] Executing cell 3/7 - molformer_chemistry-08...
+[colab] Executing cell 4/7 - molformer_chemistry-10...
+[colab] Executing cell 5/7 - molformer_chemistry-12...
+[colab] Executing cell 6/7 - Infrastructure: stage and digest-verify the pinned snapshot, then load the model...
+{'model_id': 'ibm-research/MoLFormer-XL-both-10pct', 'revision': '361063d0ad524ef77cf39b08469f6be770dc550f', 'license': 'apache-2.0', 'files': 7, 'total_bytes': 187355205}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{'weights_dir': '/content/weights/molformer-xl-both-10pct', 'fetched': ['README.md', 'config.json', 'configuration_molformer.py', 'model.safetensors', 'modeling_molformer.py', 'tokenizer.json', 'tokenizer_config.json']}
+{'verified_files': 7, 'revision': '361063d0ad524ef77cf39b08469f6be770dc550f'}
+[transformers] You are using a model of type `molformer` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+
+Loading weights:   0%|          | 0/207 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 207/207 [00:00<00:00, 6455.27it/s]
+[transformers] [1mMolformerModel LOAD REPORT[0m from: /content/weights/molformer-xl-both-10pct
+Key                                | Status     |  | 
+-----------------------------------+------------+--+-
+lm_head.transform.dense.weight     | UNEXPECTED |  | 
+lm_head.transform.LayerNorm.bias   | UNEXPECTED |  | 
+lm_head.transform.dense.bias       | UNEXPECTED |  | 
+lm_head.transform.LayerNorm.weight | UNEXPECTED |  | 
+lm_head.decoder.weight             | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+{'device': 'cuda:0', 'source': 'local-snapshot'}
+{'remote_code_executed': True, 'remote_code_files_verified': ['configuration_molformer.py', 'modeling_molformer.py'], 'tokenizer': 'TokenizersBackend', 'upstream_deterministic_eval': False, 'deterministic_eval': True, 'parameters': 44375040, 'load_warnings': 0}
+[colab] Executing cell 7/7 - molformer_chemistry-16...
+Refused: california_housing_test.csv: ValueError: CSV header ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'median_house_value'] is missing required column(s) ['id', 'smiles', 'label']; fix the input and run this cell again (the earlier results of this session and their outputs/ files were removed).
+[colab] Saving notebook with outputs to '<local-run-dir>/molformer_chemistry_colab_b21deaa_colab-cli-t4_output.ipynb'...

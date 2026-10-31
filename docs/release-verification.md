@@ -1,6 +1,8 @@
 # Release verification
 
-**Current status (2026-10-25): Candidate.** The current notebook `tutorials/molformer_chemistry_colab.ipynb` is blob `6eafc6a0dc1183b2b28dcf81027a2ff9e328b9c0` (PR #10 head `e03afaf`, regenerated from generator commit `cfadd43` for the tier C review findings of row 53). It passed a Colab CLI sequential execution on a fresh Colab Tesla T4 at `e03afaf` on 2026-10-25 (14/14 code cells, one pass, no restart, 0 errors, 99.2 s; test accuracy / macro-F1 / AUROC 1.0, reload parity 0.0; see "Recorded executions"). That run covers the **default path** only. Remaining gates: REL12 (a hosted BYOD run, one input accepted and one refused) and REL2 (a browser run of the interactive journeys). Every run of an earlier blob recorded here is history for that blob (REL14).
+**Current status (2026-10-26): Candidate.** The current blob `26019328` (code commit `e96b94d`) shows a refused BYOD input as one `Refused: <file>: <reason>` line with no traceback, removes the earlier run's results and `outputs/` files and stops Run all at that cell, while genuine failures keep their traceback (NOTEBOOK_SPEC DAT19/DAT20); its default path (2026-10-30; 14 code cells, exit 0, 0 errors) and its scripted DAT20 refusal (2026-10-30; `USE_BYOD=True;BYOD_PATH=/content/sample_data/california_housing_test.csv`: exactly one `Refused:` line at cell `molformer_chemistry-16`, no traceback, earlier cells clean, VM released) both passed on a hosted Colab Tesla T4 (Colab CLI `colab exec -f`, not a browser `Run all`), and the hosted runs of earlier blobs, including `6eafc6a0`, are history for it (REL14).
+
+**Previous status (2026-10-25): Candidate.** The previous notebook `tutorials/molformer_chemistry_colab.ipynb` is blob `6eafc6a0dc1183b2b28dcf81027a2ff9e328b9c0` (PR #10 head `e03afaf`, regenerated from generator commit `cfadd43` for the tier C review findings of row 53). It passed a Colab CLI sequential execution on a fresh Colab Tesla T4 at `e03afaf` on 2026-10-25 (14/14 code cells, one pass, no restart, 0 errors, 99.2 s; test accuracy / macro-F1 / AUROC 1.0, reload parity 0.0; see "Recorded executions"). That run covers the **default path** only. Remaining gates: REL12 (a hosted BYOD run, one input accepted and one refused) and REL2 (a browser run of the interactive journeys). Every run of an earlier blob recorded here is history for that blob (REL14).
 
 `tutorials/molformer_chemistry_colab.ipynb` (`E2E`, **standalone** carrier) is a **release candidate** until the exact
 notebook revision has executed top-to-bottom in a clean supported runtime. Unit tests, JSON validation, code-cell
@@ -151,9 +153,52 @@ runtime, not general estimates.
 | 2026-10-25 (09:24:23 UTC start) | commit `e03afaf` (PR #10 head) / blob `6eafc6a0dc11` (tier C review fixes, generated at `cfadd43`) | Colab CLI sequential execution (`colab exec -f`, not a browser Run all), fresh Colab Tesla T4 (session `suite-molformer-e03afaf-80f0`); isolated hash-locked environment | Default sample path, every form field at its default | 99.2 s | **PASSED** — 14/14 code cells in order in `exec.log`, one pass, no restart, 0 error outputs, input notebook unchanged; input manifest `accepted` (4 molecules); baselines majority 0.5 (macro-F1 0.3333) and molecular-formula lookup 0.25 (macro-F1 0.2); one-character rule 16/16; 8,275,970 of 45,557,762 parameters trainable on `cuda:0`, 4.51 s; train loss 0.482904 → 0.182822 → 0.024827 → 0.007268, validation accuracy 1.0 from epoch 1; test (n = 16) accuracy, macro-F1 and AUROC 1.0; reload parity PASS, labels equal, max abs score difference 0.0; 6 of 6 freshly generated molecules matched. Every number equals the `9c8440b` run and the numbers the notebook quotes. Evidence `docs/execution-evidence/2026-10-25-e03afaf/`: SHA-256 captured → committed: `molformer_chemistry_colab_e03afaf_colab-cli-t4_default.ipynb` `0d718dd6e086c712163b1c095eb42a2673ed67270b77886585d8cd72b345dde0` → unchanged (no local path); `exec.log` `bcfcfe8e03b47969b163c3d8353e88d69cc54f0e7ce53329d2ee0ff0954d6fe1` → `7c4f3d48b5d77137e09fed4bac07bd0b9ab7c4f79f53e19ad8b77de52bc47867` (2 local-path replacements); `run_summary.json` `dedfa4c72153a4b8e86021cb22dc42a532983b2acba86d80a06f3f3d71034264` → unchanged (no local path) |
 | 2026-09-18 | `daaa53f` / `dfb259ef` | Local pre-flight harness (Windows, CPython 3.12.10, CPU float32, `transformers 5.17.0`) | Default sample path (validate → split → embed + determinism check → baselines → adapt → evaluate → classify → export → reload); weights pre-staged, so `stage_missing_files` fetched 0 of 7 entries and `verify_snapshot` verified all 7 | 10.5 s | **PASSED** — 13/13 code cells; test accuracy/macro-F1/AUROC 1.0 (n=16) against majority 0.5/0.3333 and formula 0.25/0.2; reload parity 0.0. Pre-flight; hosted clean-runtime run still required |
 
+### Hosted Colab T4 runs of blob `26019328` (2026-10-30)
+
+These runs executed the PR head `b21deaaa4c7d7183e4c14329b43936f945dca5ec`, notebook `tutorials/molformer_chemistry_colab.ipynb` blob `26019328b4381f1e3b433d9faa5185fb74087b90`, fetched at the 40-character SHA and Git-blob verified, with the Colab CLI (`colab exec -f`) on a fresh Colab Tesla T4 session (not a browser `Run all`). Each `run_summary.json` records `verdict` `PASS`, `exec_exit_code` 0, `input_unchanged` true and `stop_verified` true (the VM was released), and the SHA-256 of each executed notebook equals the summary's `executed_sha256`.
+
+**Default path (2026-10-30 18:10:17 UTC start).** Default settings, no overrides; session `suite-molformer-b21deaa-80f0`; wall 109.8 s (`wall_s`); `code_cells` 14, `executed_cells` 11, 0 errors. Retained evidence: [`docs/execution-evidence/2026-10-30-b21deaa/`](execution-evidence/2026-10-30-b21deaa/).
+
+Printed by the default run (verbatim lines from the executed outputs):
+
+```text
+{'verified_files': 7, 'revision': '361063d0ad524ef77cf39b08469f6be770dc550f'}
+{'baseline': 'majority-class', 'predicted_label': 'branched', 'accuracy': 0.5, 'macro_f1': 0.3333}
+{'baseline': 'molecular-formula lookup', 'distinct_train_formulas': 25, 'ambiguous_train_formulas': 11, 'eval_formulas_unseen_in_train': 9, 'accuracy': 0.25, 'macro_f1': 0.2}
+{'rule': 'one-character rule (default sample only): a ( in the SMILES means branched', 'correct': 16, 'of': 16, 'accuracy': 1.0}
+{'method': 'gradient fine-tuning (AdamW) of the classification head and the last 2 encoder layer(s)', 'trainable_parameters': 8275970, 'total_parameters': 45557762, 'precision': 'float32', 'device': 'cuda:0', 'seconds': 4.58}
+{'split': 'test', 'n': 16, 'accuracy': 1.0, 'macro_f1': 1.0, 'auroc': 1.0}
+{'reload_parity': 'PASS', 'labels_equal': True, 'max_abs_score_diff': 0.0}
+```
+
+**DAT20 refusal record (2026-10-30, blob `26019328`).** Overrides, set by `--set` on a copy of the blob: `USE_BYOD` `False` → `True` and `BYOD_PATH` `''` → `'/content/sample_data/california_housing_test.csv'` (the run copy differs from the blob in exactly those 2 source lines). The suite cut the run copy right after the refusing cell `molformer_chemistry-16`, dropping 20 cells (7 of them code cells), which reproduces `Run all` stopping at the first error; the cut copy is `run_copy.ipynb`, SHA-256 `191a4e3e68eeaf218496f0d3ff92fd549e67c5b85e9dfed51153e495ea777e8f` (Git blob `8d085ec5`), equal to the summary's `run_copy_sha256`. The cut copy's earlier code cells completed without an error output; the refusing cell's only error output has `ename` `IsolatedCellRefusal` and no traceback, and its output holds exactly one `Refused:` line:
+
+```text
+Refused: california_housing_test.csv: ValueError: CSV header ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'median_house_value'] is missing required column(s) ['id', 'smiles', 'label']; fix the input and run this cell again (the earlier results of this session and their outputs/ files were removed).
+```
+
+This run says nothing about the 20 cut cells, which did not run in it. Session `suite-molformer-b21deaa-80f0`, wall 91.7 s. Retained evidence: [`docs/execution-evidence/2026-10-30-b21deaa-refusal/`](execution-evidence/2026-10-30-b21deaa-refusal/).
+
+**Local-path redaction.** Local paths were replaced byte-wise by `<local-run-dir>` (and the Colab CLI install path by `<colab-cli-tool-dir>/`) before the first commit; each executed notebook and run copy was checked against its `run_summary.json` before any edit.
+
+| File (under `docs/execution-evidence/2026-10-30-b21deaa/`) | Captured SHA-256 | Committed SHA-256 |
+|---|---|---|
+| `molformer_chemistry_colab_b21deaa_colab-cli-t4_default.ipynb` | `5309a6a82118689d0edcba26133a26c9a6a305dd0f1ec778be3eca4f7bac564e` | `5309a6a82118689d0edcba26133a26c9a6a305dd0f1ec778be3eca4f7bac564e` (unchanged, no local path) |
+| `exec.log` | `e2491797bf0ebb4020226d68561b3b0fab9ebd054c6b69d5443c50262198f52a` | `f362ce626a36d2bf9604c95c8fcb5abc98fe7fd072a5f2088bfc44dfea77fa92` (2 local-path replacements) |
+| `run_summary.json` | `1e6b66ec2330438f6cdfabfcf6c25d24e45a58e5c450bf49f7248a229c3df837` | `1e6b66ec2330438f6cdfabfcf6c25d24e45a58e5c450bf49f7248a229c3df837` (unchanged, no local path) |
+
+| File (under `docs/execution-evidence/2026-10-30-b21deaa-refusal/`) | Captured SHA-256 | Committed SHA-256 |
+|---|---|---|
+| `molformer_chemistry_colab_b21deaa_colab-cli-t4_refusal.ipynb` | `4d3d6f70718cfd5c57e528da1dcad4c84a0489e6da78f5c08e88edaff5028a2f` | `4d3d6f70718cfd5c57e528da1dcad4c84a0489e6da78f5c08e88edaff5028a2f` (unchanged, no local path) |
+| `exec.log` | `faa5ccdb3ff53a3df9c3911c351aef063c4bdc0833a3540ce888e37fe03c490c` | `3f95e4b9b28743e04c96416da933c4cd95966645fc7dd89290a519faf3645e37` (2 local-path replacements) |
+| `run_summary.json` | `31ca7ebbd915efbe96da5f674010f5343c2a358d2f01d8ba04dd6306b66a4c4b` | `31ca7ebbd915efbe96da5f674010f5343c2a358d2f01d8ba04dd6306b66a4c4b` (unchanged, no local path) |
+| `run_copy.ipynb` | `191a4e3e68eeaf218496f0d3ff92fd549e67c5b85e9dfed51153e495ea777e8f` | `191a4e3e68eeaf218496f0d3ff92fd549e67c5b85e9dfed51153e495ea777e8f` (unchanged, no local path) |
+
+Not exercised by these runs: an accepted BYOD input (REL12), a browser `Run all` of the interactive journeys (REL2), and every other open gate named in this file; these runs close none of them.
+
 ## Current status
 
-**Candidate.** The notebook now builds an isolated, hash-locked environment in Section 1 (generator `/2.2`) instead of
+**Candidate.** The current blob `26019328` (code commit `e96b94d`) shows a refused BYOD input as one `Refused: <file>: <reason>` line with no traceback, removes the earlier run's results and `outputs/` files and stops Run all at that cell, while genuine failures keep their traceback (NOTEBOOK_SPEC DAT19/DAT20); its default path (2026-10-30; 14 code cells, exit 0, 0 errors) and its scripted DAT20 refusal (2026-10-30; `USE_BYOD=True;BYOD_PATH=/content/sample_data/california_housing_test.csv`: exactly one `Refused:` line at cell `molformer_chemistry-16`, no traceback, earlier cells clean, VM released) both passed on a hosted Colab Tesla T4 (Colab CLI `colab exec -f`, not a browser `Run all`), and the hosted runs of earlier blobs, including `6eafc6a0`, are history for it (REL14). Before that change: The notebook now builds an isolated, hash-locked environment in Section 1 (generator `/2.2`) instead of
 installing into the kernel, and the review fixes (MOL-M1..M4, MOL-m1..m5) changed the carried modules and the
 notebook, so its blob is new; the review-fix blob `7b0975db8ddd` (commit `9c8440b`) completed one pass with no restart and 0 errors on a fresh Colab Tesla T4 on 2026-10-08 (Colab CLI sequential execution, 14/14 code cells, 99.8 s; test accuracy / macro-F1 / AUROC 1.0 (n = 16) against majority 0.5 and formula 0.25, repeated embeddings identical, reload parity 0.0) — record below. The 2026-09-18 Kaggle T4 run of blob
 `dfb259ef4801` needed a restart after the install cell, so it was never a one-pass Run all and is kept above as
